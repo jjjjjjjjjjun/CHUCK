@@ -1,1 +1,1 @@
-#Magicianof legend
+Talking of Legend
