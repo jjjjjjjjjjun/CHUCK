@@ -122,13 +122,3 @@ LangChain
 Google Gemini API
 
 HTML / CSS / JavaScript
-
-### requirements.txt (Python 3.10 기준)
-
-flask==3.0.0
-langchain==0.2.16
-langchain-core==0.2.38
-langchain-google-genai==1.0.10
-google-genai==0.3.0
-pydantic==2.8.2
-python-dotenv==1.0.1
