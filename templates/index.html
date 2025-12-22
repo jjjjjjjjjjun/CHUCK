@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>신비로운 이세계 동화 서고</title>
+  <title>이세계 동화 서고</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Nanum+Myeongjo:wght@700&display=swap" rel="stylesheet">
+
   <style>
     :root {
       --magic-gold: #ffd700;
@@ -12,10 +14,12 @@
       --parchment: #f4e4bc;
     }
 
+    /* ===== 배경 + 촛불 그림자 ===== */
     body {
-      background-color: #1a1a2e; /* 깊은 밤의 색 */
-      background-image: radial-gradient(circle, #2e1a47 0%, #1a1a2e 100%);
-      color: var(--parchment);
+      background-color: #e6dcf2;
+      background-image:
+        radial-gradient(circle at top, #f2ecfa 0%, #e1d4f0 60%, #d6c6e8 100%),
+        url("https://www.transparenttextures.com/patterns/old-paper.png");
       font-family: 'Gamja Flower', cursive;
       display: flex;
       justify-content: center;
@@ -23,20 +27,65 @@
       min-height: 100vh;
       margin: 0;
       overflow-x: hidden;
+      position: relative;
     }
 
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 20% 30%, rgba(0,0,0,0.25), transparent 40%),
+                  radial-gradient(circle at 80% 60%, rgba(0,0,0,0.18), transparent 45%);
+      animation: candle 6s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    @keyframes candle {
+      from { opacity: 0.4; transform: translateY(0); }
+      to   { opacity: 0.6; transform: translateY(-8px); }
+    }
+
+    /* ===== 책 컨테이너 ===== */
     .book-container {
       background-color: var(--parchment);
-      background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+      background-image:
+        url('https://www.transparenttextures.com/patterns/paper-fibers.png'),
+        url('https://www.transparenttextures.com/patterns/old-paper.png');
       color: #3e2723;
       padding: 40px;
       border-radius: 10px;
-      box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 100px rgba(139, 69, 19, 0.2);
       max-width: 600px;
       width: 90%;
       border: 8px double #8b4513;
       position: relative;
       text-align: center;
+      box-shadow:
+        0 0 40px rgba(0,0,0,0.5),
+        inset 0 0 80px rgba(139, 69, 19, 0.25);
+      filter: sepia(10%);
+      overflow: hidden;
+      transition: transform 0.6s ease, box-shadow 0.6s ease;
+    }
+
+    /* 책이 열리며 빛나는 효과 */
+    .book-container.open {
+      transform: scale(1.02);
+      box-shadow:
+        0 0 50px rgba(255,215,0,0.6),
+        inset 0 0 90px rgba(139, 69, 19, 0.35);
+    }
+
+    /* 찢어진 가장자리 */
+    .book-container::before {
+      content: "";
+      position: absolute;
+      inset: -18px;
+      background: url("https://www.transparenttextures.com/patterns/rice-paper.png");
+      mask-image: url("https://i.imgur.com/4R7Qw2y.png");
+      mask-size: cover;
+      mask-repeat: no-repeat;
+      pointer-events: none;
+      opacity: 0.9;
     }
 
     h2 {
@@ -44,15 +93,12 @@
       font-size: 2.5rem;
       margin-bottom: 20px;
       color: var(--magic-purple);
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
     }
 
     h2::before { content: "✨ "; }
-    h2::after { content: " ✨"; }
+    h2::after  { content: " ✨"; }
 
-    .input-group {
-      margin-bottom: 30px;
-    }
+    .input-group { margin-bottom: 30px; }
 
     input#concept {
       width: 80%;
@@ -77,50 +123,31 @@
       cursor: pointer;
       border-radius: 50px;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
       margin-top: 15px;
     }
 
     button:hover {
       transform: scale(1.1) rotate(-2deg);
       box-shadow: 0 0 20px var(--magic-gold);
-      background: #5e00a3;
     }
 
     #output {
       margin-top: 30px;
       padding: 20px;
-      background: rgba(255, 255, 255, 0.5);
+      background: rgba(255,255,255,0.5);
       border-radius: 5px;
       border: 1px dashed #8b4513;
-      min-height: 100px;
+      min-height: 120px;
       white-space: pre-wrap;
-      word-wrap: break-word;
-      font-size: 1.1rem;
       line-height: 1.6;
       text-align: left;
-      color: #2c1e1e;
-    }
-
-    /* 반짝이는 마법 효과 애니메이션 */
-    .magic-sparkle {
-      position: absolute;
-      pointer-events: none;
-      background: white;
-      border-radius: 50%;
-      opacity: 0;
-      animation: sparkle 1s linear;
-    }
-
-    @keyframes sparkle {
-      0% { transform: scale(0); opacity: 1; }
-      100% { transform: scale(1.5); opacity: 0; }
     }
   </style>
 </head>
+
 <body>
 
-<div class="book-container">
+<div class="book-container" id="book">
   <h2>마법사의 이야기 보따리</h2>
   <p>그대가 상상하는 세계의 파편을 입력해주오...</p>
 
@@ -137,15 +164,15 @@
 async function generateMagic() {
   const concept = document.getElementById("concept").value;
   const output = document.getElementById("output");
+  const book = document.getElementById("book");
 
-  if(!concept) {
+  if (!concept) {
     output.textContent = "저런.. 소환할 이야기의 씨앗이 필요하다네!";
     return;
   }
 
-  // 마법이 영글어가는 동안의 메시지
-  output.style.opacity = "0.5";
-  output.textContent = "수정구슬을 통해 미래를 읽는 중이니 잠시만 기다려 주오...";
+  book.classList.add("open");
+  output.textContent = "수정구슬이 빛나고 있다네...\n\n";
 
   try {
     const res = await fetch("http://127.0.0.1:5000/generate", {
@@ -155,25 +182,25 @@ async function generateMagic() {
     });
 
     const data = await res.json();
+    const story = data.story ?? data;
 
-    // 마법사의 조언: 백엔드에서 'story'라는 키로 이야기를 보낸다고 가정합니다.
-    // 만약 전체가 문자열이라면 data를 바로 쓰고, 객체라면 핵심 내용만 추출합니다.
-    output.style.opacity = "1";
+    typeWriter(output, story);
 
-    if (data.story) {
-        output.textContent = data.story;
-    } else if (typeof data === 'string') {
-        output.textContent = data;
-    } else {
-        // JSON 형태일 경우 가장 첫 번째 값이나 핵심 내용을 문장으로 출력
-        const firstKey = Object.keys(data)[0];
-        output.textContent = data[firstKey];
-    }
-
-  } catch (error) {
-    output.style.opacity = "1";
-    output.textContent = "오 이런! 마법 기류가 불안정하여 이야기를 불러오지 못했네. 다시 한 번 주문을 외워보겠나?";
+  } catch {
+    output.textContent = "마법 기류가 불안정하군… 다시 시도해보게.";
   }
+}
+
+/* ===== 타이핑 마법 ===== */
+function typeWriter(element, text, speed = 35) {
+  element.textContent = "";
+  let i = 0;
+
+  const timer = setInterval(() => {
+    element.textContent += text[i];
+    i++;
+    if (i >= text.length) clearInterval(timer);
+  }, speed);
 }
 </script>
 
