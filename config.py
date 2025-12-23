@@ -1,12 +1,20 @@
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
+from itertools import cycle
 
 load_dotenv()
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+# 여러 API Key 로드
+keys = os.getenv("GEMINI_API_KEYS")
+if not keys:
+    raise ValueError("GEMINI_API_KEYS가 설정되지 않았습니다.")
 
-if not GEMINI_API_KEY:
-    raise ValueError("GEMINI_API_KEY가 설정되지 않았습니다.")
+api_keys = [k.strip() for k in keys.split(",")]
+key_cycle = cycle(api_keys)
 
-genai.configure(api_key=GEMINI_API_KEY)
+
+def configure_next_key():
+    key = next(key_cycle)
+    genai.configure(api_key=key)
+    return key

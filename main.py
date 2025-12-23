@@ -1,7 +1,8 @@
 from flask import Flask, request, jsonify, render_template
-from chains import story_chain
+from chains import invoke_story_chain
 import json
 import re
+from firebase import save_story
 
 app = Flask(__name__)
 
@@ -44,21 +45,30 @@ def index():
 @app.route("/generate", methods=["POST"])
 def generate():
     try:
-        data = request.get_json(force=True)
-        concept = data.get("concept", "").strip()
+        data = request.get_json(force=True) or {}
 
+        name = str(data.get("name", "")).strip()
+        concept = str(data.get("concept", "")).strip()
+
+        if not name:
+            return jsonify({"error": "name이 비어 있습니다", "received": data}), 400
         if not concept:
-            return jsonify({"error": "concept가 비어 있습니다"}), 400
+            return jsonify({"error": "concept가 비어 있습니다", "received": data}), 400
 
         # LangChain 호출
-        response = story_chain.invoke({"concept": concept})
+        response = invoke_story_chain(concept)
         raw = response.content
 
-        # JSON 정제
+        # JSON 정제 및 파싱
         clean = extract_json(raw)
-
-        # JSON 파싱
         parsed = json.loads(clean)
+
+        # Firebase 저장
+        save_story(
+            name=name,
+            concept=concept,
+            story=parsed.get("story", parsed)
+        )
 
         return jsonify(parsed)
 
@@ -66,7 +76,7 @@ def generate():
         return jsonify({
             "error": "JSON 파싱 실패",
             "detail": str(e),
-            "raw": clean
+            "raw": raw
         }), 500
 
     except Exception as e:

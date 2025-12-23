@@ -7,63 +7,140 @@
   <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Nanum+Myeongjo:wght@700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --magic-gold: #ffd700;
-      --magic-purple: #4b0082;
-      --parchment: #f4e4bc;
+      --magic-gold: #ffcf40;
+      --magic-purple: #3a1c71;
+      --deep-ocean: #0f0c29;
+      --parchment-light: #fdf5e6;
+      --parchment-dark: #e6d5b8;
+      --text-brown: #3e2723;
     }
 
+    * { box-sizing: border-box; }
+
     body {
-      background-color: #1a1a2e; /* 깊은 밤의 색 */
-      background-image: radial-gradient(circle, #2e1a47 0%, #1a1a2e 100%);
-      color: var(--parchment);
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: var(--parchment-light);
       font-family: 'Gamja Flower', cursive;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       margin: 0;
+      padding: 20px;
       overflow-x: hidden;
     }
 
+    /* 배경 별가루 효과 */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-image:
+        radial-gradient(1px 1px at 20px 30px, #fff, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 40px 70px, #fff, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 50px 160px, #fff, rgba(0,0,0,0));
+      background-repeat: repeat;
+      background-size: 200px 200px;
+      opacity: 0.3;
+      z-index: -1;
+      animation: twinkle 5s infinite linear;
+    }
+
+    @keyframes twinkle {
+      from { transform: translateY(0); }
+      to { transform: translateY(-200px); }
+    }
+
     .book-container {
-      background-color: var(--parchment);
-      background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
-      color: #3e2723;
-      padding: 40px;
-      border-radius: 10px;
-      box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 100px rgba(139, 69, 19, 0.2);
-      max-width: 600px;
-      width: 90%;
-      border: 8px double #8b4513;
+      background: var(--parchment-light);
+      background-image: url('https://www.transparenttextures.com/patterns/old-map.png');
+      color: var(--text-brown);
+      width: 100%;
+      max-width: 1200px;
+      border-radius: 20px;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 0 80px rgba(0,0,0,0.1);
+      border: 12px double var(--text-brown);
       position: relative;
+      overflow: hidden;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header-section {
+      padding: 40px 20px;
       text-align: center;
+      background: rgba(0,0,0,0.03);
+      border-bottom: 2px solid rgba(0,0,0,0.1);
     }
 
     h2 {
       font-family: 'Nanum Myeongjo', serif;
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-      color: var(--magic-purple);
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      font-size: 3rem;
+      margin: 0;
+      background: linear-gradient(to bottom, #4b0082, #3a1c71);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
     }
 
-    h2::before { content: "✨ "; }
-    h2::after { content: " ✨"; }
+    .subtitle {
+      font-size: 1.4rem;
+      margin-top: 10px;
+      opacity: 0.8;
+      color: #5d4037;
+    }
+
+    /* 입력 UI */
+    .input-section {
+      padding: 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
 
     .input-group {
-      margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
     }
 
-    input#concept {
-      width: 80%;
-      padding: 12px;
-      border: none;
-      border-bottom: 2px solid #8b4513;
-      background: transparent;
+    .input-group.full { grid-column: 1 / -1; }
+
+    label {
+      font-weight: bold;
+      font-size: 1rem;
+      margin-bottom: 8px;
+      color: var(--magic-purple);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    input {
+      padding: 12px 15px;
+      border: 2px solid rgba(139, 69, 19, 0.2);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.5);
       font-family: 'Gamja Flower', cursive;
       font-size: 1.2rem;
       outline: none;
-      color: #5d4037;
+      transition: all 0.3s;
+    }
+
+    input:focus {
+      border-color: var(--magic-purple);
+      background: white;
+      box-shadow: 0 0 10px rgba(58, 28, 113, 0.1);
+    }
+
+    .btn-container {
+      padding-bottom: 40px;
       text-align: center;
     }
 
@@ -71,111 +148,203 @@
       background: var(--magic-purple);
       color: var(--magic-gold);
       border: 2px solid var(--magic-gold);
-      padding: 10px 25px;
-      font-size: 1.3rem;
+      padding: 15px 60px;
+      font-size: 1.6rem;
       font-family: 'Gamja Flower', cursive;
       cursor: pointer;
       border-radius: 50px;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      margin-top: 15px;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      position: relative;
+      overflow: hidden;
     }
 
     button:hover {
-      transform: scale(1.1) rotate(-2deg);
-      box-shadow: 0 0 20px var(--magic-gold);
-      background: #5e00a3;
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 15px 25px rgba(255, 207, 64, 0.3);
     }
 
-    #output {
-      margin-top: 30px;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.5);
-      border-radius: 5px;
-      border: 1px dashed #8b4513;
-      min-height: 100px;
+    button:disabled {
+      background: #777;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* 좌우 분할 페이지 레이아웃 */
+    .story-display {
+      display: flex;
+      background: var(--parchment-dark);
+      background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+      min-height: 600px;
+      border-top: 4px solid var(--text-brown);
+      position: relative;
+    }
+
+    .story-display::before { /* 책등 효과 */
+      content: "";
+      position: absolute;
+      left: 50%; top: 0; bottom: 0;
+      width: 40px;
+      background: linear-gradient(to right,
+        rgba(0,0,0,0.1) 0%,
+        rgba(0,0,0,0.05) 40%,
+        rgba(255,255,255,0.1) 50%,
+        rgba(0,0,0,0.05) 60%,
+        rgba(0,0,0,0.1) 100%);
+      transform: translateX(-50%);
+      z-index: 2;
+    }
+
+    .page {
+      flex: 1;
+      padding: 50px;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .output-box {
+      font-size: 1.5rem;
+      line-height: 2.2;
+      color: #2c1e1e;
       white-space: pre-wrap;
       word-wrap: break-word;
-      font-size: 1.1rem;
-      line-height: 1.6;
-      text-align: left;
-      color: #2c1e1e;
+      height: 100%;
     }
 
-    /* 반짝이는 마법 효과 애니메이션 */
-    .magic-sparkle {
-      position: absolute;
-      pointer-events: none;
-      background: white;
+    #magic-image {
+      width: 100%;
+      max-height: 400px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 8px solid white;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      margin-bottom: 25px;
+      display: none;
+    }
+
+    .loader {
+      display: none;
+      margin: 20px auto;
+      width: 50px; height: 50px;
+      border: 5px solid rgba(255,255,255,0.3);
+      border-top-color: var(--magic-gold);
       border-radius: 50%;
-      opacity: 0;
-      animation: sparkle 1s linear;
+      animation: spin 1s infinite linear;
     }
 
-    @keyframes sparkle {
-      0% { transform: scale(0); opacity: 1; }
-      100% { transform: scale(1.5); opacity: 0; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 900px) {
+      .story-display { flex-direction: column; }
+      .story-display::before { display: none; }
+      .page { padding: 30px; border-bottom: 1px solid rgba(0,0,0,0.1); }
+      h2 { font-size: 2.2rem; }
     }
   </style>
 </head>
 <body>
 
 <div class="book-container">
-  <h2>마법사의 이야기 보따리</h2>
-  <p>그대가 상상하는 세계의 파편을 입력해주오...</p>
-
-  <div class="input-group">
-    <input id="concept" placeholder="예: 구름 위를 걷는 고양이" />
-    <br>
-    <button onclick="generateMagic()">이야기 소환하기</button>
+  <div class="header-section">
+    <h2>✨ 신비로운 동화 서고 ✨</h2>
+    <p class="subtitle">마법의 깃펜이 그대의 이야기를 기록할 준비를 마쳤습니다.</p>
   </div>
 
-  <div id="output">이곳에 마법 같은 이야기가 기록됩니다...</div>
+  <div class="input-section">
+    <div class="input-group">
+      <label>📜 학번</label>
+      <input id="studentId" type="text" placeholder="예: 20304" />
+    </div>
+    <div class="input-group">
+      <label>👤 마법사 성함</label>
+      <input id="username" type="text" placeholder="이름을 남겨주오" />
+    </div>
+    <div class="input-group full">
+      <label>🔮 이야기의 씨앗 (주제)</label>
+      <input id="concept" type="text" placeholder="예: 무지개 끝에서 보물을 지키는 아기 용" />
+    </div>
+  </div>
+
+  <div class="btn-container">
+    <button id="summonBtn" onclick="generateMagic()">이야기 소환하기</button>
+    <div id="loader" class="loader"></div>
+  </div>
+
+  <div class="story-display">
+    <div class="page left">
+      <div id="output-left" class="output-box">서고의 왼쪽 장에 신비로운 모험의 시작이 기록됩니다...</div>
+    </div>
+
+    <div class="page right">
+      <div id="img-container">
+        <img id="magic-image" src="" alt="마법 삽화" />
+      </div>
+      <div id="output-right" class="output-box">서고의 오른쪽 장에 마법 같은 결말이 맺어집니다...</div>
+    </div>
+  </div>
 </div>
 
 <script>
 async function generateMagic() {
-  const concept = document.getElementById("concept").value;
-  const output = document.getElementById("output");
+  const studentId = document.getElementById("studentId").value.trim();
+  const name = document.getElementById("username").value.trim();
+  const concept = document.getElementById("concept").value.trim();
 
-  if(!concept) {
-    output.textContent = "저런.. 소환할 이야기의 씨앗이 필요하다네!";
+  const outputLeft = document.getElementById("output-left");
+  const outputRight = document.getElementById("output-right");
+  const summonBtn = document.getElementById("summonBtn");
+  const loader = document.getElementById("loader");
+
+  // ✅ 입력 검증 (로딩 전에)
+  if (!studentId || !name || !concept) {
+    outputLeft.textContent = "";
+    outputRight.textContent = "학번, 이름, 주제를 모두 입력해야 합니다.";
     return;
   }
 
-  // 마법이 영글어가는 동안의 메시지
-  output.style.opacity = "0.5";
-  output.textContent = "수정구슬을 통해 미래를 읽는 중이니 잠시만 기다려 주오...";
+  summonBtn.disabled = true;
+  loader.style.display = "block";
+
+  outputLeft.textContent = ""; // 왼쪽은 항상 비움
+  outputRight.textContent = "마법의 서고가 이야기를 기록 중입니다...";
 
   try {
-    const res = await fetch("http://127.0.0.1:5000/generate", {
+    const response = await fetch("/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ concept })
+      body: JSON.stringify({
+        name: name,
+        concept: concept
+      })
     });
 
-    const data = await res.json();
-
-    // 마법사의 조언: 백엔드에서 'story'라는 키로 이야기를 보낸다고 가정합니다.
-    // 만약 전체가 문자열이라면 data를 바로 쓰고, 객체라면 핵심 내용만 추출합니다.
-    output.style.opacity = "1";
-
-    if (data.story) {
-        output.textContent = data.story;
-    } else if (typeof data === 'string') {
-        output.textContent = data;
-    } else {
-        // JSON 형태일 경우 가장 첫 번째 값이나 핵심 내용을 문장으로 출력
-        const firstKey = Object.keys(data)[0];
-        output.textContent = data[firstKey];
+    if (!response.ok) {
+      throw new Error("서버 응답 실패");
     }
 
-  } catch (error) {
-    output.style.opacity = "1";
-    output.textContent = "오 이런! 마법 기류가 불안정하여 이야기를 불러오지 못했네. 다시 한 번 주문을 외워보겠나?";
+    const data = await response.json();
+
+    if (data.error) {
+      throw new Error(data.error);
+    }
+
+    // ✅ 오른쪽에만 출력
+    outputLeft.textContent = "";
+    outputRight.textContent = data.story || "이야기가 생성되지 않았습니다.";
+
+  } catch (err) {
+    console.error(err);
+    outputLeft.textContent = "";
+    outputRight.textContent = "마법이 실패했습니다. 잠시 후 다시 시도하세요.";
+  } finally {
+    summonBtn.disabled = false;
+    loader.style.display = "none";
   }
 }
 </script>
+
 
 </body>
 </html>
